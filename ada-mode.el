@@ -2209,6 +2209,7 @@ and the offset."
 	pos
 	match-cons
 	result
+        (downcase-char-after (downcase (char-after)))
 	(orgpoint (save-excursion
 		    (beginning-of-line)
 		    (forward-comment -10000)
@@ -2275,7 +2276,7 @@ and the offset."
      ;;  starting with e
      ;;---------------------------
 
-     ((= (downcase (char-after)) ?e)
+     ((= downcase-char-after ?e)
       (cond
 
        ;; ------  end  ------
@@ -2358,7 +2359,7 @@ and the offset."
      ;;  starting with w (when)
      ;;---------------------------
 
-     ((and (= (downcase (char-after)) ?w)
+     ((and (= downcase-char-after ?w)
 	   (looking-at "when\\>"))
       (save-excursion
 	(ada-goto-matching-start 1)
@@ -2369,7 +2370,7 @@ and the offset."
      ;;   starting with t (then)
      ;;---------------------------
 
-     ((and (= (downcase (char-after)) ?t)
+     ((and (= downcase-char-after ?t)
 	   (looking-at "then\\>"))
       (if (save-excursion (ada-goto-previous-word)
 			  (looking-at "and\\>"))
@@ -2385,7 +2386,7 @@ and the offset."
      ;;   starting with l (loop)
      ;;---------------------------
 
-     ((and (= (downcase (char-after)) ?l)
+     ((and (= downcase-char-after ?l)
 	   (looking-at "loop\\>"))
       (setq pos (point))
       (save-excursion
@@ -2404,9 +2405,9 @@ and the offset."
      ;;    starting with l (limited) or r (record)
      ;;----------------------------
 
-     ((or (and (= (downcase (char-after)) ?l)
+     ((or (and (= downcase-char-after ?l)
 	       (looking-at "limited\\>"))
-	  (and (= (downcase (char-after)) ?r)
+	  (and (= downcase-char-after ?r)
 	       (looking-at "record\\>")))
 
       (save-excursion
@@ -2422,7 +2423,7 @@ and the offset."
      ;;   starting with b (begin)
      ;;---------------------------
 
-     ((and (= (downcase (char-after)) ?b)
+     ((and (= downcase-char-after ?b)
 	   (looking-at "begin\\>"))
       (save-excursion
 	(if (ada-goto-decl-start t)
@@ -2433,7 +2434,7 @@ and the offset."
      ;;   starting with i (is)
      ;;---------------------------
 
-     ((and (= (downcase (char-after)) ?i)
+     ((and (= downcase-char-after ?i)
 	   (looking-at "is\\>"))
 
       (if (and ada-indent-is-separate
@@ -2454,7 +2455,7 @@ and the offset."
      ;;  starting with r (return, renames)
      ;;---------------------------
 
-     ((and (= (downcase (char-after)) ?r)
+     ((and (= downcase-char-after ?r)
 	   (looking-at "re\\(turn\\|names\\)\\>"))
 
       (save-excursion
@@ -2510,9 +2511,9 @@ and the offset."
      ;;   'private' as statement-start
      ;;--------------------------------
 
-     ((or (and (= (downcase (char-after)) ?o)
+     ((or (and (= downcase-char-after ?o)
                (ada-looking-at-semi-or))
-          (and (= (downcase (char-after)) ?p)
+          (and (= downcase-char-after ?p)
 	       (ada-looking-at-semi-private)))
       (save-excursion
 	;;  ??? Wasn't this done already in ada-looking-at-semi-or ?
@@ -2523,7 +2524,7 @@ and the offset."
      ;;   starting with 'd'  (do)
      ;;--------------------------------
 
-     ((and (= (downcase (char-after)) ?d)
+     ((and (= downcase-char-after ?d)
 	   (looking-at "do\\>"))
       (save-excursion
 	(ada-goto-stmt-start)
@@ -2588,7 +2589,8 @@ and the offset."
      ;; package/function/procedure
      ;;---------------------------------
 
-     ((and (or (= (downcase (char-after)) ?p) (= (downcase (char-after)) ?f))
+     ((and (or (= downcase-char-after ?p)
+               (= downcase-char-after ?f))
 	   (looking-at "\\<\\(package\\|function\\|procedure\\)\\>"))
       (save-excursion
 	;;  Go up until we find either a generic section, or the end of the
