@@ -3977,7 +3977,7 @@ If NOERROR is non-nil, it only returns nil if no matching start found."
 
 (defun ada-search-ignore-string-comment
   (search-re &optional backward limit paramlists search-func)
-  "Regexp-search for SEARCH-RE, ignoring comments, strings.
+  "Regexp-search for SEARCH-RE, ignoring strings and comments.
 Returns a cons cell of begin and end of match data or nil, if not found.
 If BACKWARD is non-nil, search backward; search forward otherwise.
 The search stops at pos LIMIT.
