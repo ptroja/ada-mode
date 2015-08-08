@@ -654,7 +654,7 @@ The package name is in (match-string 4).")
 	    "^[ \t]*" (regexp-opt '("function" "package" "procedure")
 				  t) "\\>\\(\\sw\\|[ \t_.]\\)+\\<is\\>"        "\\|"
 	    "^[ \t]*exception\\>"
-	    "\\)")                      )
+	    "\\)"))
   "Regexp of possible ends for a non-broken statement.
 A new statement starts after these.")
 
@@ -3808,7 +3808,7 @@ If GOTOTHEN is non-nil, point moves to the 'then' following 'if'."
 		(if (looking-at "is")
 		    ;;  remove entry for end
 		    (pop last-was-begin))))
-	    (setq nest-count     (1- nest-count)))
+	    (setq nest-count (1- nest-count)))
 
 	   ((or (looking-at "procedure")
 		(looking-at "function"))
@@ -3962,7 +3962,7 @@ If NOERROR is non-nil, it only returns nil if no matching start found."
        (t
 	(if (not first)
 	    (setq nest-count (1+ nest-count)))
-	(setq found      (<= nest-count 0))
+	(setq found (<= nest-count 0))
 	(forward-word 1)))              ; end of 'cond'
 
       (setq first nil))
