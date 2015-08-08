@@ -3466,15 +3466,15 @@ Moves point to the beginning of the declaration."
 	;; no, => 'procedure'/'function'/'task'/'protected'
 	;;
 	(progn
-	  (forward-word 2)
-	  (backward-word 1)
+          (forward-word 1)
+          (skip-chars-forward " \t\n")
 	  ;;
 	  ;; skip 'body' 'type'
 	  ;;
 	  (if (looking-at "\\<\\(body\\|type\\)\\>")
 	      (forward-word 1))
-	  (forward-sexp 1)
-	  (backward-sexp 1)))
+          (forward-sexp)
+          (backward-sexp)))
       ;;
       ;; should be looking-at the correct name
       ;;
@@ -5273,8 +5273,8 @@ for `ada-procedure-start-regexp'."
      ((or (looking-at "^[ \t]*procedure")
 	  (setq func-found (looking-at "^[ \t]*function")))
       ;; treat it as a proc/func
-      (forward-word 2)
-      (forward-word -1)
+      (forward-word 1)
+      (skip-chars-forward " \t\n")
       (setq procname (buffer-substring (point) (cdr match))) ; store  proc name
 
       ;; goto end of procname
