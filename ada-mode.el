@@ -242,7 +242,7 @@ An example is :
 procedure Foo is
 begin
 >>>>>>>>>>null;"
-  :type 'integer  :group 'ada)
+  :type 'integer :group 'ada)
 
 (defcustom ada-indent-after-return t
   "Non-nil means automatically indent after RET or LFD."
@@ -828,7 +828,7 @@ the 4 file locations can be clicked on and jumped to."
 ;; corresponding action is applied automatically each time the buffer
 ;; changes via syntax-propertize-function.
 ;;
-;; on XEmacs, the `syntax-table' property does not exist and we have to use a
+;; On XEmacs, the `syntax-table' property does not exist and we have to use a
 ;; slow advice to `parse-partial-sexp' to do the same thing.
 ;; When executing parse-partial-sexp, we simply modify the strings before and
 ;; after, so that the special constants '"', '(' and ')' do not interact
@@ -848,19 +848,19 @@ the 4 file locations can be clicked on and jumped to."
     (modify-syntax-entry ?:  "." st)
     (modify-syntax-entry ?\; "." st)
     (modify-syntax-entry ?&  "." st)
-    (modify-syntax-entry ?\|  "." st)
+    (modify-syntax-entry ?\| "." st)
     (modify-syntax-entry ?+  "." st)
     (modify-syntax-entry ?*  "." st)
     (modify-syntax-entry ?/  "." st)
     (modify-syntax-entry ?=  "." st)
     (modify-syntax-entry ?<  "." st)
     (modify-syntax-entry ?>  "." st)
-    (modify-syntax-entry ?$ "." st)
+    (modify-syntax-entry ?$  "." st)
     (modify-syntax-entry ?\[ "." st)
     (modify-syntax-entry ?\] "." st)
     (modify-syntax-entry ?\{ "." st)
     (modify-syntax-entry ?\} "." st)
-    (modify-syntax-entry ?. "." st)
+    (modify-syntax-entry ?.  "." st)
     (modify-syntax-entry ?\\ "." st)
     (modify-syntax-entry ?\' "." st)
 
@@ -1475,7 +1475,7 @@ word itself has a special casing."
 
 	  ;; If the item is already in the list, even with an other casing,
 	  ;; do not add it again. This way, the user can easily decide which
-	  ;; priority should be applied to each casing exception
+	  ;; priority should be applied to each casing exception.
 	  (let ((word (buffer-substring-no-properties
 		       (point) (save-excursion (forward-word 1) (point)))))
 
@@ -2035,7 +2035,7 @@ Return the equivalent internal parameter list."
 ;;
 ;;  The relevant functions for indentation are:
 ;;  - `ada-indent-region': Re-indent a region of text
-;;  - `ada-justified-indent-current': Re-indent the current line and shows the
+;;  - `ada-justified-indent-current': Re-indent the current line and show the
 ;;    calculation that were done
 ;;  - `ada-indent-current': Re-indent the current line
 ;;  - `ada-get-current-indent': Calculate the indentation for the current line,
@@ -2278,7 +2278,7 @@ and the offset."
      ((= (downcase (char-after)) ?e)
       (cond
 
-       ;; -------  end  ------
+       ;; ------  end  ------
 
        ((looking-at "end\\>")
 	(let ((label 0)
@@ -2328,14 +2328,14 @@ and the offset."
 	      ;;  Else keep the same indentation as the beginning statement
 	      (list (+ (save-excursion (back-to-indentation) (point)) label) 0)))))
 
-       ;; ------  exception  ----
+       ;; ------  exception  ------
 
        ((looking-at "exception\\>")
 	(save-excursion
 	  (ada-goto-matching-start 1)
 	  (list (save-excursion (back-to-indentation) (point)) 0)))
 
-       ;; else
+       ;; ------  else ------
 
        ((looking-at "else\\>")
 	(if (save-excursion (ada-goto-previous-word)
@@ -2345,7 +2345,7 @@ and the offset."
 	    (ada-goto-matching-start 1 nil t)
 	    (list (progn (back-to-indentation) (point)) 0))))
 
-       ;; elsif
+       ;; ------  elsif ------
 
        ((looking-at "elsif\\>")
 	(save-excursion
