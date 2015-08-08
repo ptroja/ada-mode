@@ -3676,8 +3676,7 @@ If GOTOTHEN is non-nil, point moves to the 'then' following 'if'."
 	;;  This is removed from the list when "package", "procedure", ...
 	;;  are seen. The goal is to find whether a package has an elaboration
 	;;  part.
-
-	(pos nil))
+	)
 
     ;; search backward for interesting keywords
     (while (and
@@ -3699,28 +3698,29 @@ If GOTOTHEN is non-nil, point moves to the 'then' following 'if'."
 	   ;; found loop/select/record/case/if => check if it starts or
 	   ;; ends a block
 	   ((looking-at "loop\\|select\\|record\\|case\\|if")
-	    (setq pos (point))
-	    (save-excursion
-	      ;; check if keyword follows 'end'
-	      (ada-goto-previous-word)
-	      (if (looking-at "\\<end\\>[ \t]*[^;]")
-		  (progn
-		    ;; it ends a block => increase nest depth
-		    (setq nest-count (1+ nest-count)
-			  pos        (point))
-		    (push nil last-was-begin))
+            (let ((pos (point)))
+              (save-excursion
+                ;; check if keyword follows 'end'
+                (ada-goto-previous-word)
+                (if (looking-at "\\<end\\>[ \t]*[^;]")
+                    (progn
+                      ;; it ends a block => increase nest depth
+                      (setq nest-count (1+ nest-count)
+                            pos        (point))
+                      (push nil last-was-begin))
 
-		;; it starts a block => decrease nest depth
-		(setq nest-count (1- nest-count))
+                  ;; it starts a block => decrease nest depth
+                  (setq nest-count (1- nest-count))
 
-		;; Some nested  "begin .. end" blocks with no "declare"?
-		;;  => remove those entries
-		(while (car last-was-begin)
-		  (setq last-was-begin (cddr last-was-begin)))
+                  ;; Some nested  "begin .. end" blocks with no "declare"?
+                  ;;  => remove those entries
+                  (while (car last-was-begin)
+                    (setq last-was-begin (cddr last-was-begin)))
 
-		(pop last-was-begin)
-		))
-	    (goto-char pos)
+                  (pop last-was-begin)
+                  ))
+              (goto-char pos)
+              )
 	    )
 
 	   ;; found package start => check if it really is a block
