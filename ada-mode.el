@@ -557,24 +557,22 @@ This variable defines several rules to use to align different lines.")
 
 (defconst ada-83-keywords
   (eval-when-compile
-    (concat "\\<" (regexp-opt ada-83-string-keywords t) "\\>"))
+    (regexp-opt ada-83-string-keywords 'words))
   "Regular expression matching Ada83 keywords.")
 
 (defconst ada-95-keywords
   (eval-when-compile
-    (concat "\\<" (regexp-opt
-		   (append
-		    ada-95-string-keywords
-		    ada-83-string-keywords) t) "\\>"))
+    (regexp-opt (append
+                 ada-95-string-keywords
+                 ada-83-string-keywords) 'words))
   "Regular expression matching Ada95 keywords.")
 
 (defconst ada-2005-keywords
   (eval-when-compile
-    (concat "\\<" (regexp-opt
-		   (append
-		    ada-2005-string-keywords
-		    ada-83-string-keywords
-		    ada-95-string-keywords) t) "\\>"))
+    (regexp-opt (append
+                 ada-2005-string-keywords
+                 ada-95-string-keywords
+                 ada-83-string-keywords) 'words))
   "Regular expression matching Ada2005 keywords.")
 
 (defvar ada-keywords ada-2005-keywords
@@ -662,11 +660,9 @@ A new statement starts after these.")
 
 (defvar ada-matching-start-re
   (eval-when-compile
-    (concat "\\<"
-	    (regexp-opt
-	     '("end" "loop" "select" "begin" "case" "do" "declare"
-	       "if" "task" "package" "procedure" "function" "record" "protected") t)
-	    "\\>"))
+    (regexp-opt
+     '("end" "loop" "select" "begin" "case" "do" "declare"
+       "if" "task" "package" "procedure" "function" "record" "protected") 'words))
   "Regexp used in `ada-goto-matching-start'.")
 
 (defvar ada-loop-start-re
@@ -675,8 +671,8 @@ A new statement starts after these.")
 
 (defvar ada-subprog-start-re
   (eval-when-compile
-    (concat "\\<" (regexp-opt '("accept" "entry" "function" "overriding" "package" "procedure"
-				"protected" "task") t) "\\>"))
+    (regexp-opt '("accept" "entry" "function" "overriding" "package" "procedure"
+                  "protected" "task") 'words))
   "Regexp for the start of a subprogram.")
 
 (defvar ada-contextual-menu-on-identifier nil
@@ -3489,10 +3485,9 @@ If NOERROR is non-nil, return nil if no match was found;
 otherwise throw error."
   (let ((nest-count 1)
         (regexp (eval-when-compile
-                  (concat "\\<"
-                          (regexp-opt
-                           '("is" "separate" "end" "declare" "if" "new" "begin" "generic" "when") t)
-                          "\\>")))
+                  (regexp-opt
+                   '("is" "separate" "end" "declare" "if" "new"
+                     "begin""generic" "when") 'words)))
 
 	;;  first should be set to t if we should stop at the first
 	;;  "begin" we encounter.
@@ -3878,11 +3873,10 @@ Which block depends on the value of NEST-LEVEL, which defaults to zero.
 If NOERROR is non-nil, it only returns nil if no matching start found."
   (let ((nest-count (or nest-level 0))
 	(regex (eval-when-compile
-		 (concat "\\<"
-			 (regexp-opt '("end" "loop" "select" "begin" "case"
-				       "if" "task" "package" "record" "do"
-				       "procedure" "function") t)
-			 "\\>")))
+                 (regexp-opt '("end" "loop" "select" "begin" "case"
+                               "if" "task" "package" "record" "do"
+                               "procedure" "function") 'words)
+                 ))
 	found
 	pos
 
@@ -5172,17 +5166,15 @@ Return nil if no body was found."
 
      ;;
      ;; Main keywords, except those treated specially below.
-     (concat "\\<"
-	     (regexp-opt
-	      '("abort" "abs" "abstract" "accept" "access" "aliased" "all"
-		"and" "array" "at" "begin" "case" "declare" "delay" "delta"
-		"digits" "do" "else" "elsif" "entry" "exception" "exit" "for"
-		"generic" "if" "in" "interface" "is" "limited" "loop" "mod" "not"
-		"null" "or" "others" "overriding" "private" "protected" "raise"
-		"range" "record" "rem" "renames" "requeue" "return" "reverse"
-		"select" "separate" "synchronized" "tagged" "task" "terminate"
-		"then" "until" "when" "while" "with" "xor") t)
-	     "\\>")
+     (regexp-opt
+      '("abort" "abs" "abstract" "accept" "access" "aliased" "all"
+        "and" "array" "at" "begin" "case" "declare" "delay" "delta"
+        "digits" "do" "else" "elsif" "entry" "exception" "exit" "for"
+        "generic" "if" "in" "interface" "is" "limited" "loop" "mod" "not"
+        "null" "or" "others" "overriding" "private" "protected" "raise"
+        "range" "record" "rem" "renames" "requeue" "return" "reverse"
+        "select" "separate" "synchronized" "tagged" "task" "terminate"
+        "then" "until" "when" "while" "with" "xor") 'words)
      ;;
      ;; Anything following end and not already fontified is a body name.
      '("\\<\\(end\\)\\>\\([ \t]+\\)?\\(\\(\\sw\\|[_.]\\)+\\)?"
