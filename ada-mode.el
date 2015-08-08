@@ -602,7 +602,7 @@ Note that this also matches a variable declaration.")
 
 ;;  "with" needs to be included in the regexp, to match generic subprogram parameters
 ;;  Similarly, we put '[not] overriding' on the same line with 'procedure' etc.
-(defvar ada-procedure-start-regexp
+(defconst ada-procedure-start-regexp
   (concat
    "^[ \t]*\\(with[ \t]+\\)?\\(\\(not[ \t]+\\)?overriding[ \t]+\\)?\\(procedure\\|function\\|task\\)[ \t\n]+"
 
@@ -633,7 +633,7 @@ The package name is in (match-string 4).")
 
 ;;; ---- regexps for indentation functions
 
-(defvar ada-block-start-re
+(defconst ada-block-start-re
   (eval-when-compile
     (concat "\\<\\(" (regexp-opt '("begin" "declare" "else"
 				   "exception" "generic" "loop" "or"
@@ -641,7 +641,7 @@ The package name is in (match-string 4).")
 	    "\\|\\(\\(limited\\|abstract\\|tagged\\)[ \t\n]+\\)*record\\)\\>"))
   "Regexp for keywords starting Ada blocks.")
 
-(defvar ada-end-stmt-re
+(defconst ada-end-stmt-re
   (eval-when-compile
     (concat "\\("
 	    ";"                                        "\\|"
@@ -658,22 +658,24 @@ The package name is in (match-string 4).")
   "Regexp of possible ends for a non-broken statement.
 A new statement starts after these.")
 
-(defvar ada-matching-start-re
+(defconst ada-matching-start-re
   (eval-when-compile
     (regexp-opt
      '("end" "loop" "select" "begin" "case" "do" "declare"
        "if" "task" "package" "procedure" "function" "record" "protected") 'words))
   "Regexp used in `ada-goto-matching-start'.")
 
-(defvar ada-loop-start-re
+(defconst ada-loop-start-re
   "\\<\\(for\\|while\\|loop\\)\\>"
   "Regexp for the start of a loop.")
 
-(defvar ada-subprog-start-re
+(defconst ada-subprog-start-re
   (eval-when-compile
     (regexp-opt '("accept" "entry" "function" "overriding" "package" "procedure"
                   "protected" "task") 'words))
   "Regexp for the start of a subprogram.")
+
+;;; ---- end of regexps for indentation functions
 
 (defvar ada-contextual-menu-on-identifier nil
   "Set to true when the right mouse button was clicked on an identifier.")
@@ -5125,7 +5127,7 @@ Return nil if no body was found."
   '(("[^a-zA-Z0-9)]\\('\\)[^\n]\\('\\)" (1 (7 . ?')) (2 (7 . ?')))
     ("^[ \t]*\\(#\\(if\\|else\\|elsif\\|end\\)\\)" (1 (11 . ?\n)))))
 
-(defvar ada-font-lock-keywords
+(defconst ada-font-lock-keywords
   (eval-when-compile
     (list
      ;;
