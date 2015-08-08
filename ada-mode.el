@@ -3671,11 +3671,11 @@ If GOTOTHEN is non-nil, point moves to the 'then' following 'if'."
 	(found nil)
 
 	(last-was-begin '())
-	;;  List all keywords encountered while traversing
-	;;  something like '("end" "end" "begin")
-	;;  This is removed from the list when "package", "procedure",...
+	;;  List with all keywords encountered while traversing,
+	;;  something like '("end" "end" "begin").
+	;;  This is removed from the list when "package", "procedure", ...
 	;;  are seen. The goal is to find whether a package has an elaboration
-	;;  part
+	;;  part.
 
 	(pos nil))
 
