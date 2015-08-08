@@ -2510,9 +2510,9 @@ and the offset."
      ;;   'private' as statement-start
      ;;--------------------------------
 
-     ((and (or (= (downcase (char-after)) ?o)
-	       (= (downcase (char-after)) ?p))
-	   (or (ada-looking-at-semi-or)
+     ((or (and (= (downcase (char-after)) ?o)
+               (ada-looking-at-semi-or))
+          (and (= (downcase (char-after)) ?p)
 	       (ada-looking-at-semi-private)))
       (save-excursion
 	;;  ??? Wasn't this done already in ada-looking-at-semi-or ?
