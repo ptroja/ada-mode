@@ -602,7 +602,7 @@ Note that this also matches a variable declaration.")
 
 ;;  "with" needs to be included in the regexp, to match generic subprogram parameters
 ;;  Similarly, we put '[not] overriding' on the same line with 'procedure' etc.
-(defconst ada-procedure-start-regexp
+(defconst ada-procedure-start-re
   (concat
    "^[ \t]*\\(with[ \t]+\\)?\\(\\(not[ \t]+\\)?overriding[ \t]+\\)?\\(procedure\\|function\\|task\\)[ \t\n]+"
 
@@ -617,12 +617,12 @@ Note that this also matches a variable declaration.")
   "Regexp matching Ada subprogram start.
 The actual start is at (match-beginning 4).  The name is in (match-string 5).")
 
-(defconst ada-name-regexp
+(defconst ada-name-re
   "\\([a-zA-Z][a-zA-Z0-9_.']*[a-zA-Z0-9]\\)"
   "Regexp matching a fully qualified name (including attribute).")
 
-(defconst ada-package-start-regexp
-  (concat "^[ \t]*\\(private[ \t]+\\)?\\(package\\)[ \t\n]+\\(body[ \t]*\\)?" ada-name-regexp)
+(defconst ada-package-start-re
+  (concat "^[ \t]*\\(private[ \t]+\\)?\\(package\\)[ \t\n]+\\(body[ \t]*\\)?" ada-name-re)
   "Regexp matching start of package.
 The package name is in (match-string 4).")
 
@@ -4437,7 +4437,7 @@ Moves to 'begin' if in a declarative part."
   "Move point to next procedure."
   (interactive)
   (end-of-line)
-  (if (re-search-forward ada-procedure-start-regexp nil t)
+  (if (re-search-forward ada-procedure-start-re nil t)
       (goto-char (match-beginning 4))
     (error "No more functions/procedures/tasks")))
 
@@ -4445,7 +4445,7 @@ Moves to 'begin' if in a declarative part."
   "Move point to previous procedure."
   (interactive)
   (beginning-of-line)
-  (if (re-search-backward ada-procedure-start-regexp nil t)
+  (if (re-search-backward ada-procedure-start-re nil t)
       (goto-char (match-beginning 4))
     (error "No more functions/procedures/tasks")))
 
@@ -4453,7 +4453,7 @@ Moves to 'begin' if in a declarative part."
   "Move point to next package."
   (interactive)
   (end-of-line)
-  (if (re-search-forward ada-package-start-regexp nil t)
+  (if (re-search-forward ada-package-start-re nil t)
       (goto-char (match-beginning 1))
     (error "No more packages")))
 
@@ -4461,7 +4461,7 @@ Moves to 'begin' if in a declarative part."
   "Move point to previous package."
   (interactive)
   (beginning-of-line)
-  (if (re-search-backward ada-package-start-regexp nil t)
+  (if (re-search-backward ada-package-start-re nil t)
       (goto-char (match-beginning 1))
     (error "No more packages")))
 
@@ -4973,9 +4973,9 @@ Used in `ff-pre-load-hook'."
   (setq ff-function-name nil)
   (save-excursion
     (end-of-line);;  make sure we get the complete name
-    (or (if (re-search-backward ada-procedure-start-regexp nil t)
+    (or (if (re-search-backward ada-procedure-start-re nil t)
 	    (setq ff-function-name (match-string 5)))
-	(if (re-search-backward ada-package-start-regexp nil t)
+	(if (re-search-backward ada-package-start-re nil t)
 	    (setq ff-function-name (match-string 4))))
     ))
 
@@ -5260,7 +5260,7 @@ Use \\[widen] to go back to the full visibility for the buffer."
 (defun ada-gen-treat-proc (match)
   "Make dummy body of a procedure/function specification.
 MATCH is a cons cell containing the start and end locations of the last search
-for `ada-procedure-start-regexp'."
+for `ada-procedure-start-re'."
   (goto-char (car match))
   (let (func-found procname functype)
     (cond
@@ -5340,23 +5340,23 @@ This function typically is to be hooked into `ff-file-created-hook'."
 
   (let (found ada-procedure-or-package-start-regexp)
     (if (setq found
-	     (ada-search-ignore-string-comment ada-package-start-regexp nil))
+	     (ada-search-ignore-string-comment ada-package-start-re nil))
 	(progn (goto-char (cdr found))
 	       (insert " body")
 	       )
       (error "No package"))
 
     (setq ada-procedure-or-package-start-regexp
-	 (concat ada-procedure-start-regexp
+	 (concat ada-procedure-start-re
 		 "\\|"
-		 ada-package-start-regexp))
+		 ada-package-start-re))
 
     (while (setq found
 		(ada-search-ignore-string-comment
 		 ada-procedure-or-package-start-regexp nil))
       (progn
 	(goto-char (car found))
-	(if (looking-at ada-package-start-regexp)
+	(if (looking-at ada-package-start-re)
 	    (progn (goto-char (cdr found))
 		   (insert " body"))
 	  (ada-gen-treat-proc found))))))
@@ -5365,7 +5365,7 @@ This function typically is to be hooked into `ff-file-created-hook'."
 (defun ada-make-subprogram-body ()
   "Create a dummy subprogram body in package body file from spec surrounding point."
   (interactive)
-  (let* ((found (re-search-backward ada-procedure-start-regexp nil t))
+  (let* ((found (re-search-backward ada-procedure-start-re nil t))
 	 (spec  (match-beginning 0))
 	 body-file)
     (if found
@@ -5394,7 +5394,7 @@ This function typically is to be hooked into `ff-file-created-hook'."
 	    (newline)
 	    (forward-char -1)
 	    (insert spec)
-	    (re-search-backward ada-procedure-start-regexp nil t)
+	    (re-search-backward ada-procedure-start-re nil t)
 	    (ada-gen-treat-proc (cons (match-beginning 0) (match-end 0)))
 	    ))
       (error "Not in subprogram spec"))))
