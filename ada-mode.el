@@ -3716,9 +3716,9 @@ If GOTOTHEN is non-nil, point moves to the 'then' following 'if'."
 		;; Some nested  "begin .. end" blocks with no "declare"?
 		;;  => remove those entries
 		(while (car last-was-begin)
-		  (setq last-was-begin (cdr (cdr last-was-begin))))
+		  (setq last-was-begin (cddr last-was-begin)))
 
-		(setq last-was-begin (cdr last-was-begin))
+		(pop last-was-begin)
 		))
 	    (goto-char pos)
 	    )
@@ -3749,7 +3749,7 @@ If GOTOTHEN is non-nil, point moves to the 'then' following 'if'."
 			   (not (car last-was-begin)))
 		      (setq nest-count (1- nest-count))))))
 
-	    (setq last-was-begin (cdr last-was-begin))
+	    (pop last-was-begin)
 	    )
 	   ;; found task start => check if it has a body
 	   ((looking-at "task")
@@ -3783,19 +3783,19 @@ If GOTOTHEN is non-nil, point moves to the 'then' following 'if'."
 		(unless (progn (forward-word 1)
 			       (looking-at "[ \t]*;"))
 		  (setq nest-count (1- nest-count))))))
-	    (setq last-was-begin (cdr last-was-begin))
+	    (pop last-was-begin)
 	    )
 
 	   ((looking-at "declare")
 	    ;;  remove entry for begin and end (include nested begin..end
 	    ;;  groups)
-	    (setq last-was-begin (cdr last-was-begin))
+	    (pop last-was-begin)
 	    (let ((count 1))
 	      (while (and (> count 0))
 		(if (equal (car last-was-begin) t)
 		    (setq count (1+ count))
 		  (setq count (1- count)))
-		(setq last-was-begin (cdr last-was-begin))
+		(pop last-was-begin)
 		)))
 
 	   ((looking-at "protected")
@@ -3807,7 +3807,7 @@ If GOTOTHEN is non-nil, point moves to the 'then' following 'if'."
 		    (goto-char (car pos)))
 		(if (looking-at "is")
 		    ;;  remove entry for end
-		    (setq last-was-begin (cdr last-was-begin)))))
+		    (pop last-was-begin))))
 	    (setq nest-count     (1- nest-count)))
 
 	   ((or (looking-at "procedure")
@@ -3819,8 +3819,8 @@ If GOTOTHEN is non-nil, point moves to the 'then' following 'if'."
 		(if pos
 		    (goto-char (car pos)))
 		(if (looking-at "is")
-		    ;;  remove entry for begin and end
-		    (setq last-was-begin (cdr (cdr last-was-begin))))))
+		    ;;  remove entries for begin and end
+		    (setq last-was-begin (cddr last-was-begin)))))
 	    )
 
 	   ;; all the other block starts
