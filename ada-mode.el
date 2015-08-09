@@ -835,7 +835,7 @@ the 4 file locations can be clicked on and jumped to."
 ;; better is available on XEmacs.
 ;;-------------------------------------------------------------------------
 
-(defvar ada-mode-syntax-table
+(defconst ada-mode-syntax-table
   (let ((st (make-syntax-table)))
     ;; Define string brackets (`%' is alternative string bracket, but
     ;; almost never used as such and throws font-lock and indentation
@@ -882,7 +882,7 @@ the 4 file locations can be clicked on and jumped to."
     st)
   "Syntax table to be used for editing Ada source code.")
 
-(defvar ada-mode-symbol-syntax-table
+(defconst ada-mode-symbol-syntax-table
   (let ((st (make-syntax-table ada-mode-syntax-table)))
     (modify-syntax-entry ?_ "w" st)
     st)
