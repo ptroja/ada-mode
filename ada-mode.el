@@ -3967,11 +3967,8 @@ If NOERROR is non-nil, it only returns nil if no matching start found."
 
       (setq first nil))
 
-    (if found
-	t
-      (if noerror
-	  nil
-	(error "No matching end")))
+    (if (and (not found) (not noerror))
+	(error "No matching end"))
     ))
 
 
