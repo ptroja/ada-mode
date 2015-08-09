@@ -660,9 +660,10 @@ A new statement starts after these.")
 
 (defconst ada-matching-start-re
   (eval-when-compile
-    (regexp-opt
+    (concat "(\\|)\\|"
+     (regexp-opt
      '("end" "loop" "select" "begin" "case" "do" "declare"
-       "if" "task" "package" "procedure" "function" "record" "protected") 'words))
+       "if" "task" "package" "procedure" "function" "record" "protected") 'words)))
   "Regexp used in `ada-goto-matching-start'.")
 
 (defconst ada-loop-start-re
@@ -3669,7 +3670,6 @@ If NOERROR is non-nil, it only returns nil if no matching start was found.
 If GOTOTHEN is non-nil, point moves to the 'then' following 'if'."
   (let ((nest-count (if nest-level nest-level 0))
 	(found nil)
-
 	(last-was-begin '())
 	;;  List with all keywords encountered while traversing,
 	;;  something like '("end" "end" "begin").
@@ -3690,6 +3690,16 @@ If GOTOTHEN is non-nil, point moves to the 'then' following 'if'."
 	(progn
 	  ;; calculate nest-depth
 	  (cond
+           ;; found closing paren => increase nest depth
+           ((= (char-after) ?\))
+            (push ?\) last-was-begin)
+            (setq nest-count (1+ nest-count)))
+
+           ;; found opening paren => decrease nest depth
+           ((= (char-after) ?\()
+            (pop last-was-begin)
+            (setq nest-count (1- nest-count)))
+
 	   ;; found block end => increase nest depth
 	   ((looking-at "end")
 	    (push nil last-was-begin)
@@ -3709,16 +3719,21 @@ If GOTOTHEN is non-nil, point moves to the 'then' following 'if'."
                             pos        (point))
                       (push nil last-was-begin))
 
-                  ;; it starts a block => decrease nest depth
-                  (setq nest-count (1- nest-count))
+                  ;; it starts a block => decrease nest depth,
+                  ;; unless it is a start of a conditional expression
+                  (ada-goto-next-word)
+                  (unless (and (eq (car last-was-begin) ?\))
+                               (or (= (char-after) ?i)   ;; looking at if
+                                   (= (char-after) ?c))) ;; looking at case
+                    (setq nest-count (1- nest-count))
 
-                  ;; Some nested  "begin .. end" blocks with no "declare"?
-                  ;;  => remove those entries
-                  (while (car last-was-begin)
-                    (setq last-was-begin (cddr last-was-begin)))
+                    ;; Some nested  "begin .. end" blocks with no "declare"?
+                    ;;  => remove those entries
+                    (while (car last-was-begin)
+                      (setq last-was-begin (cddr last-was-begin)))
 
-                  (pop last-was-begin)
-                  ))
+                    (pop last-was-begin)
+                    )))
               (goto-char pos)
               )
 	    )
@@ -3753,6 +3768,7 @@ If GOTOTHEN is non-nil, point moves to the 'then' following 'if'."
 	    )
 	   ;; found task start => check if it has a body
 	   ((looking-at "task")
+
 	    (save-excursion
 	      (forward-word 1)
 	      (ada-goto-next-non-ws)
