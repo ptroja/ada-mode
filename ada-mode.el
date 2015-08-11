@@ -3775,9 +3775,9 @@ If GOTOTHEN is non-nil, point moves to the 'then' following 'if'."
 
 	    (pop last-was-begin)
 	    )
+
 	   ;; found task start => check if it has a body
 	   ((looking-at "task")
-
 	    (save-excursion
 	      (forward-word 1)
 	      (ada-goto-next-non-ws)
