@@ -2590,19 +2590,21 @@ and the offset."
 
      ((and (or (= downcase-char-after ?p)
                (= downcase-char-after ?f))
-	   (looking-at "\\<\\(package\\|function\\|procedure\\)\\>"))
+	   (looking-at
+            (eval-when-compile (regexp-opt '("package" "function" "procedure")
+                                           'words))))
       (save-excursion
 	;;  Go up until we find either a generic section, or the end of the
 	;;  previous subprogram/package, or 'overriding' for this function/procedure
 	(let (found)
 	  (while (and (not found)
 		      (ada-search-ignore-string-comment
-	     "\\<\\(generic\\|end\\|begin\\|overriding\\|package\\|procedure\\|function\\)\\>" t))
+	     "\\<\\(generic\\|end\\|begin\\|overriding\\|package\\|procedure\\|function\\)\\>" t)) ;; shuold be optimized with regexp-opt
 
 	    ;;  avoid "with procedure"... in generic parts
 	    (save-excursion
 	      (forward-word -1)
-	      (setq found (not (looking-at "with"))))))
+	      (setq found (not (looking-at "with\\>"))))))
 
 	(cond
 	 ((looking-at "\\<generic\\|overriding\\>")
