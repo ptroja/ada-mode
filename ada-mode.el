@@ -2971,6 +2971,15 @@ ORGPOINT is the limit position used in the calculation."
 	       "[^ \t\n]" nil orgpoint t))))
       (list cur-indent 'ada-indent))
      ;;
+     ;; opening paren follows 'is' => expression function
+     ;;
+     ((and
+       foundis
+       (save-excursion
+         (setq match-cons
+               (ada-search-ignore-string-comment "\(" nil orgpoint)))
+       (list cur-indent 0)))
+     ;;
      ;; is abstract/separate/new ...
      ;;
      ((and
