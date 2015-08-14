@@ -5298,9 +5298,9 @@ Use \\[widen] to go back to the full visibility for the buffer."
 
 ;; ---------------------------------------------------------
 ;;    Automatic generation of code
-;; The Ada mode has a set of function to automatically generate a subprogram
+;; The Ada mode has a set of functions to automatically generate a subprogram
 ;; or package body from its spec.
-;; These function only use a primary and basic algorithm, this could use a
+;; These functions only use a primary and basic algorithm, this could use a
 ;; lot of improvement.
 ;; When the user is using GNAT, we rather use gnatstub to generate an accurate
 ;; body.
