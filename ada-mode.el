@@ -711,7 +711,7 @@ displaying the menu if point was on an identifier."
 
 
 ;;------------------------------------------------------------------
-;; Support for imenu  (see imenu.el)
+;; Support for imenu (see imenu.el)
 ;;------------------------------------------------------------------
 
 (defconst ada-imenu-comment-re "\\([ \t]*--.*\\)?")
@@ -5315,7 +5315,7 @@ for `ada-procedure-start-re'."
       ;; look for next non WS
       (cond
        ((looking-at "[ \t]*;")
-	(delete-region (match-beginning 0) (match-end 0));; delete the ';'
+	(delete-region (match-beginning 0) (match-end 0)) ;; delete the ';'
 	(ada-indent-newline-indent)
 	(insert "is")
 	(ada-indent-newline-indent)
