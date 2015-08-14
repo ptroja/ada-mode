@@ -723,7 +723,7 @@ displaying the menu if point was on an identifier."
 	  "\\)[ \t\n]*"
 	  "\\(return[ \t\n]+\\(\\sw\\|[_.]\\)+[ \t\n]*\\)?is[ \t\n]"))
 
-(defvar ada-imenu-generic-expression
+(defconst ada-imenu-generic-expression
   (list
    (list nil ada-imenu-subprogram-menu-re 3)
    (list "*Specs*"
