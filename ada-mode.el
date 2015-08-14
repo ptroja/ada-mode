@@ -5158,12 +5158,13 @@ Return nil if no body was found."
      ;; handle "type T is access function return S;"
      (list "\\<\\(function[ \t]+return\\)\\>" '(1 font-lock-keyword-face) )
 
-     ;;  preprocessor line
-     (list "^[ \t]*\\(#.*\n\\)"  '(1 font-lock-type-face t))
+     ;;
+     ;; preprocessor line
+     (list "^[ \t]*\\(#.*\n\\)" '(1 font-lock-type-face t))
 
      ;;
-     ;; accept, entry, function, package (body), protected (body|type),
-     ;; pragma, procedure, task (body) plus name.
+     ;; accept, entry, function, package (body), pragma, procedure,
+     ;; protected (body|type), task (body|type) plus name.
      (list (concat
 	    "\\<\\("
 	    "accept\\|"
@@ -5179,9 +5180,11 @@ Return nil if no body was found."
 	    "task[ \t]+body\\|"
 	    "task[ \t]+type\\|"
 	    "task"
-	    "\\)\\>[ \t]*"
+	    "\\)\\>"
+            "[ \t]*"
 	    "\\(\\sw+\\(\\.\\sw*\\)*\\)?")
 	   '(1 font-lock-keyword-face) '(2 font-lock-function-name-face nil t))
+
      ;;
      ;; Optional keywords followed by a type name.
      (list (concat
@@ -5209,25 +5212,39 @@ Return nil if no body was found."
         "range" "record" "rem" "renames" "requeue" "return" "reverse"
         "select" "separate" "synchronized" "tagged" "task" "terminate"
         "then" "until" "when" "while" "with" "xor") 'words)
+
      ;;
      ;; Anything following end and not already fontified is a body name.
      '("\\<\\(end\\)\\>[ \t]*\\(\\(\\sw\\|[_.]\\)+\\)?"
        (1 font-lock-keyword-face) (3 font-lock-function-name-face nil t))
+
      ;;
      ;; Keywords followed by a type or function name.
      (list (concat "\\<\\("
-		   "new\\|of\\|subtype\\|type"
-		   "\\)\\>[ \t]*\\(\\sw+\\(\\.\\sw*\\)*\\)?[ \t]*\\((\\)?")
+		   "new\\|"
+                   "of\\|"
+                   "subtype\\|"
+                   "type\\)\\>"
+                   "[ \t]*"
+                   "\\(\\sw+\\(\\.\\sw*\\)*\\)?"
+                   "[ \t]*"
+                   "\\((\\)?")
 	   '(1 font-lock-keyword-face)
 	   '(2 (if (match-beginning 4)
 		   font-lock-function-name-face
 		 font-lock-type-face) nil t))
+
      ;;
      ;; Keywords followed by a (comma separated list of) reference.
      ;; Note that font-lock only works on single lines, thus we can not
      ;; correctly highlight a with_clause that spans multiple lines.
-     (list (concat "\\<\\(goto\\|raise\\|use\\|with\\)"
-		   "[ \t]+\\([a-zA-Z0-9_., \t]+\\)\\W")
+     (list (concat "\\<\\("
+                   "goto\\|"
+                   "raise\\|"
+                   "use\\|"
+                   "with\\)\\>"
+		   "[ \t]*"
+                   "\\([a-zA-Z0-9_., \t]+\\)\\W")
 	   '(1 font-lock-keyword-face) '(2 font-lock-constant-face nil t))
 
      ;;
