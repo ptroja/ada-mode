@@ -600,6 +600,15 @@ Note that this also matches a variable declaration.")
   (concat "\\(?:" ada-block-label-re "\\)\\|\\(?:" ada-goto-label-re "\\)")
   "Regexp matching a goto or block label.")
 
+(defconst ada-name-re
+  "\\([a-zA-Z][a-zA-Z0-9_.']*[a-zA-Z0-9]\\)"
+  "Regexp matching a fully qualified name (including attribute).")
+
+(defconst ada-package-start-re
+  (concat "^[ \t]*\\(private[ \t]+\\)?\\(package\\)[ \t\n]+\\(body[ \t]*\\)?" ada-name-re)
+  "Regexp matching start of package.
+The package name is in (match-string 4).")
+
 ;;  "with" needs to be included in the regexp, to match generic subprogram parameters
 ;;  Similarly, we put '[not] overriding' on the same line with 'procedure' etc.
 (defconst ada-procedure-start-re
@@ -616,15 +625,6 @@ Note that this also matches a variable declaration.")
    "\\)")
   "Regexp matching Ada subprogram start.
 The actual start is at (match-beginning 4).  The name is in (match-string 5).")
-
-(defconst ada-name-re
-  "\\([a-zA-Z][a-zA-Z0-9_.']*[a-zA-Z0-9]\\)"
-  "Regexp matching a fully qualified name (including attribute).")
-
-(defconst ada-package-start-re
-  (concat "^[ \t]*\\(private[ \t]+\\)?\\(package\\)[ \t\n]+\\(body[ \t]*\\)?" ada-name-re)
-  "Regexp matching start of package.
-The package name is in (match-string 4).")
 
 (defconst ada-compile-goto-error-file-linenr-re
   "\\([-_.a-zA-Z0-9]+\\):\\([0-9]+\\)\\(:\\([0-9]+\\)\\)?"
