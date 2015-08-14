@@ -5003,14 +5003,13 @@ Used in `ff-pre-load-hook'."
 	    (setq ff-function-name (match-string 4))))
     ))
 
-
 (defvar ada-last-which-function-line -1
   "Last line on which `ada-which-function' was called.")
+(make-variable-buffer-local 'ada-last-which-function-line)
+
 (defvar ada-last-which-function-subprog 0
   "Last subprogram name returned by `ada-which-function'.")
 (make-variable-buffer-local 'ada-last-which-function-subprog)
-(make-variable-buffer-local 'ada-last-which-function-line)
-
 
 (defun ada-which-function ()
   "Return the name of the function whose body the point is in.
