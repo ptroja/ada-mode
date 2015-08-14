@@ -5203,7 +5203,7 @@ Return nil if no body was found."
         "then" "until" "when" "while" "with" "xor") 'words)
      ;;
      ;; Anything following end and not already fontified is a body name.
-     '("\\<\\(end\\)\\>\\([ \t]+\\)?\\(\\(\\sw\\|[_.]\\)+\\)?"
+     '("\\<\\(end\\)\\>[ \t]*\\(\\(\\sw\\|[_.]\\)+\\)?"
        (1 font-lock-keyword-face) (3 font-lock-function-name-face nil t))
      ;;
      ;; Keywords followed by a type or function name.
