@@ -5184,8 +5184,16 @@ Return nil if no body was found."
 	   '(1 font-lock-keyword-face) '(2 font-lock-function-name-face nil t))
      ;;
      ;; Optional keywords followed by a type name.
-     (list (concat                      ; ":[ \t]*"
-	    "\\<\\(access[ \t]+all\\|access[ \t]+constant\\|access\\|constant\\|in[ \t]+reverse\\|\\|in[ \t]+out\\|in\\|out\\)\\>"
+     (list (concat
+	    "\\<\\("
+            "access[ \t]+all\\|"
+            "access[ \t]+constant\\|"
+            "access\\|"
+            "constant\\|"
+            "in[ \t]+reverse\\|"
+            "in[ \t]+out\\|"
+            "in\\|"
+            "out\\)\\>"
 	    "[ \t]*"
 	    "\\(\\sw+\\(\\.\\sw*\\)*\\)?")
 	   '(1 font-lock-keyword-face nil t) '(2 font-lock-type-face nil t))
