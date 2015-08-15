@@ -90,7 +90,7 @@
 
 ;;; Code:
 ;; Note: Every function in this package is compiler-independent.
-;; The names start with  ada-
+;; The names start with ada-
 ;; The variables that the user can edit can all be modified through
 ;;   the customize mode. They are sorted in alphabetical order in this
 ;;   file.
@@ -233,7 +233,6 @@ It may be `downcase-word', `upcase-word', `ada-loose-case-word' or
 (make-obsolete-variable 'ada-clean-buffer-before-saving
 			"use the `write-file-functions' hook."
 			"23.2")
-
 
 (defcustom ada-indent 3
   "Size of Ada indentation.
@@ -4414,7 +4413,7 @@ Moves to 'begin' if in a declarative part."
          ;; We also need to make sure that we ignore nested subprograms
          ((save-excursion
             (and (skip-syntax-backward "w")
-                 (looking-at "\\<function\\>\\|\\<procedure\\>" )
+                 (looking-at "\\<function\\>\\|\\<procedure\\>")
                  (ada-search-ignore-string-comment "is\\|;")
                  (not (= (char-before) ?\;))
                  ))
@@ -4424,7 +4423,7 @@ Moves to 'begin' if in a declarative part."
          ;; on first line of task declaration
          ((save-excursion
             (and (ada-goto-stmt-start)
-                 (looking-at "\\<task\\>" )
+                 (looking-at "\\<task\\>")
                  (forward-word 1)
                  (ada-goto-next-non-ws)
                  (looking-at "\\<body\\>")))
@@ -4621,7 +4620,7 @@ Moves to 'begin' if in a declarative part."
 	      ["Gdb Documentation"      (info "gdb")
 	       (eq ada-which-compiler 'gnat)]
 	      ["Ada95 Reference Manual" (info "arm95") t])
-	     ("Options"  :included (derived-mode-p 'ada-mode)
+	     ("Options" :included (derived-mode-p 'ada-mode)
 	      ["Auto Casing" (setq ada-auto-case (not ada-auto-case))
 	       :style toggle :selected ada-auto-case]
 	      ["Auto Indent After Return"
@@ -4676,7 +4675,7 @@ Moves to 'begin' if in a declarative part."
 	       (eq ada-which-compiler 'gnat)]
 	      ["Goto Parent Unit"        ada-goto-parent
 	       (eq ada-which-compiler 'gnat)]
-	      ["--"                      nil                              nil]
+	      ["--"                      nil                    nil]
 	      ["Next compilation error"  next-error             t]
 	      ["Previous Package"        ada-previous-package   t]
 	      ["Next Package"            ada-next-package       t]
@@ -4719,7 +4718,7 @@ Moves to 'begin' if in a declarative part."
 	      ["-----"                       nil                          nil]
 	      ["Narrow to subprogram"        ada-narrow-to-defun          t])
 	     ("Templates"
-	      :included  (derived-mode-p 'ada-mode)
+	      :included (derived-mode-p 'ada-mode)
 	      ["Header"          ada-header          t]
 	      ["-"               nil                 nil]
 	      ["Package Body"    ada-package-body    t]
