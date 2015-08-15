@@ -4171,10 +4171,14 @@ Return nil if the private is part of the package name, as in
   "Search for REGEXP, ignoring comments, strings, 'and then', 'or else'.
 If BACKWARDP is non-nil, search backward; search forward otherwise."
   (let (result)
-  (while (and (setq result (ada-search-ignore-string-comment regexp backwardp))
-	      (save-excursion (forward-word -1)
-			      (looking-at "and then\\|or else"))))
-  result))
+    (while (and (setq result (ada-search-ignore-string-comment regexp backwardp))
+                (or (and (looking-at "then\\>")
+                         (save-excursion (backward-word)
+                                         (looking-at "and\\>")))
+                    (and (looking-at "else\\>")
+                         (save-excursion (backward-word)
+                                         (looking-at "or\\>"))))))
+    result))
 
 (defun ada-in-open-paren-p ()
   "Non-nil if in an open parenthesis.
