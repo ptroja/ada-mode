@@ -717,7 +717,9 @@ displaying the menu if point was on an identifier."
 
 (defconst ada-imenu-subprogram-menu-re
   (concat "^[ \t]*\\(overriding[ \t]*\\)?\\(procedure\\|function\\)[ \t\n]+"
+          ;; entry?
 	  "\\(\\(\\sw\\|_\\)+\\)[ \t\n]*\\([ \t\n]\\|([^)]+)"
+          ;; operators, e.g. "*"?
 	  ada-imenu-comment-re
 	  "\\)[ \t\n]*"
 	  "\\(return[ \t\n]+\\(\\sw\\|[_.]\\)+[ \t\n]*\\)?is[ \t\n]"))
@@ -727,7 +729,7 @@ displaying the menu if point was on an identifier."
    (list nil ada-imenu-subprogram-menu-re 3)
    (list "*Specs*"
 	 (concat
-	  "^[ \t]*\\(procedure\\|function\\)[ \t\n]+\\(\\(\\sw\\|_\\)+\\)"
+	  "^[ \t]*\\(procedure\\|function\\)[ \t\n]+\\(\\(\\sw\\|_\\)+\\)" ;; entry?
 	  "\\("
 	  "\\(" ada-imenu-comment-re "[ \t\n]+\\|[ \t\n]*([^)]+)"
 	  ada-imenu-comment-re "\\)";; parameter list or simple space
@@ -3947,7 +3949,7 @@ If NOERROR is non-nil, it only returns nil if no matching start found."
        ;; Nothing should be done if we have only the specs or a
        ;; generic instantiation.
 
-       ((and (looking-at "\\<procedure\\|function\\>"))
+       ((and (looking-at "\\<procedure\\|function\\>")) ;; entry?
 	(if first
 	    (forward-word 1)
 
@@ -4413,7 +4415,7 @@ Moves to 'begin' if in a declarative part."
          ;; We also need to make sure that we ignore nested subprograms
          ((save-excursion
             (and (skip-syntax-backward "w")
-                 (looking-at "\\<function\\>\\|\\<procedure\\>")
+                 (looking-at "\\<function\\>\\|\\<procedure\\>") ;; entry?
                  (ada-search-ignore-string-comment "is\\|;")
                  (not (= (char-before) ?\;))
                  ))
@@ -4466,7 +4468,7 @@ Moves to 'begin' if in a declarative part."
   (end-of-line)
   (if (re-search-forward ada-procedure-start-re nil t)
       (goto-char (match-beginning 4))
-    (error "No more functions/procedures/tasks")))
+    (error "No more functions/procedures/tasks"))) ;; tasks?
 
 (defun ada-previous-procedure ()
   "Move point to previous procedure."
@@ -4474,7 +4476,7 @@ Moves to 'begin' if in a declarative part."
   (beginning-of-line)
   (if (re-search-backward ada-procedure-start-re nil t)
       (goto-char (match-beginning 4))
-    (error "No more functions/procedures/tasks")))
+    (error "No more functions/procedures/tasks"))) ;; tasks?
 
 (defun ada-next-package ()
   "Move point to next package."
