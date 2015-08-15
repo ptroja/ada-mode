@@ -4167,12 +4167,10 @@ Return nil if the private is part of the package name, as in
      ;;              'simple type' for task/protected.
 
      ;; Let's skip back over the subprogram/operator name
-     (progn
-       (skip-chars-backward " \t\n")
-       (if (= (char-before) ?\")
-	   (skip-syntax-backward "\".w")
-	 (backward-word 1))
-       t)
+     (skip-chars-backward " \t\n")
+     (if (= (char-before) ?\")
+         (skip-syntax-backward "\".w")
+       (backward-word 1))
 
      ;; and now over the second one
      (backward-word 1)
