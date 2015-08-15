@@ -4141,7 +4141,7 @@ Return nil if the private is part of the package name, as in
      (progn
        (skip-chars-backward " \t\n")
        (if (= (char-before) ?\")
-	   (backward-char 3)
+	   (skip-syntax-backward "\".w")
 	 (backward-word 1))
        t)
 
