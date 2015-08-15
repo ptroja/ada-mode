@@ -4135,10 +4135,38 @@ Return nil if the private is part of the package name, as in
      ;; inside parentheses ?
      (= (char-after) ?\()
 
-     ;; We could be looking at two things here:
-     ;;  operator definition:   function "." (
-     ;;  subprogram definition: procedure .... (
-     ;; Let's skip back over the first one
+     ;; We could be looking at the following things, which correspond
+     ;; Ada 95 grammar productions that include 'formal_part_opt' (for
+     ;; subprogram parameters):
+     ;;
+     ;;  operator:                                       function "." (
+     ;;  function:                                       function ... (
+     ;;  generic operator parameter :               with function "." (
+     ;;  generic function parameter :               with function ... (
+     ;;  access to function:            access           function (
+     ;;  access to protected function:  access protected function (
+     ;;
+     ;;  procedure:                                      procedure ... (
+     ;;  generic procedure parameter :              with procedure ... (
+     ;;  access to procedure:           access           procedure (
+     ;;  access to protected procedure: access protected procedure (
+     ;;
+     ;;  entry:                                          entry ... (
+     ;;  accept:                                        accept ... (
+     ;;  entry family:                         entry ... ( . . . ) (
+     ;;  accept for entry family:             accept ... ( . . . ) (
+     ;;
+     ;; and 'discrim_part_opt' (for discriminated things):
+     ;;
+     ;;  type declaration and generic formal:            type ...
+     ;;  task declaration:                          task type ...
+     ;;  protected declaration:                protected type ...
+     ;;
+     ;; where ... is 'compound_name' for procedure/function,
+     ;;              'identifier' for entry/accept/type,
+     ;;              'simple type' for task/protected.
+
+     ;; Let's skip back over the subprogram/operator name
      (progn
        (skip-chars-backward " \t\n")
        (if (= (char-before) ?\")
