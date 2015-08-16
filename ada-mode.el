@@ -4127,8 +4127,15 @@ Return nil if the private is part of the package name, as in
 			      (looking-at "\\<package\\>"))))))))
 
 
+(defun looking-back-at-whitespace-or-semi ()
+  "Return t if point is at the start of the buffer or it is just
+  after whitespace or semicolon."
+  (and (memq (char-before) '(nil ?\s ?\t ?\n ?\;))
+       t))
+
+
 (defun ada-in-paramlist-p ()
-  "Return t if point is inside the parameter-list of a declaration, but not a subprogram call or aggregate."
+  "Return t if point is inside the parameter-list of a declaration, but not of a subprogram call or aggregate."
   (save-excursion
     (and
      (ada-search-ignore-string-comment "(\\|)" t nil t)
@@ -4139,60 +4146,107 @@ Return nil if the private is part of the package name, as in
      ;; Ada 95 grammar productions that include 'formal_part_opt' (for
      ;; subprogram parameters):
      ;;
-     ;;  operator:                                       function "." (
-     ;;  function:                                       function ... (
-     ;;  generic operator parameter :               with function "." (
-     ;;  generic function parameter :               with function ... (
-     ;;  access to function:            access           function (
-     ;;  access to protected function:  access protected function (
+     ;; +(1)  operator:                                       function "."  (
+     ;; +(2)  function:                                       function P.Id (
+     ;; +(3)  generic operator parameter :               with function "."  (
+     ;; +(4)  generic function parameter :               with function Id   (
+     ;; +(5)  access to function:            access           function (
+     ;; +(6)  access to protected function:  access protected function (
      ;;
-     ;;  procedure:                                      procedure ... (
-     ;;  generic procedure parameter :              with procedure ... (
-     ;;  access to procedure:           access           procedure (
-     ;;  access to protected procedure: access protected procedure (
+     ;; +(7)  procedure:                                      procedure P.Id (
+     ;; +(8)  generic procedure parameter :              with procedure Id   (
+     ;; +(9)  access to procedure:           access           procedure (
+     ;; +(10) access to protected procedure: access protected procedure (
      ;;
-     ;;  entry:                                          entry ... (
-     ;;  accept:                                        accept ... (
-     ;;  entry family:                         entry ... ( . . . ) (
-     ;;  accept for entry family:             accept ... ( . . . ) (
+     ;; +(11) entry:                                          entry Id  (
+     ;; +(12) accept:                                        accept Id  (
+     ;;  (13) entry family:                          entry Id ( . . . ) (
+     ;;  (14) accept for entry family:              accept Id ( . . . ) (
      ;;
      ;; and 'discrim_part_opt' (for discriminated things):
      ;;
-     ;;  type declaration and generic formal:            type ...
-     ;;  task declaration:                          task type ...
-     ;;  protected declaration:                protected type ...
+     ;; +(15) type declaration and generic formal:            type ...
+     ;; +(16) task declaration:                          task type ...
+     ;; +(17) protected declaration:                protected type ...
      ;;
-     ;; where ... is 'compound_name' for procedure/function,
-     ;;              'identifier' for entry/accept/type,
-     ;;              'simple type' for task/protected.
+     ;; where "."  is operator name (e.g. "*", "+", "abs") and
+     ;;       P.Id is 'compound_name' for procedure/function,
+     ;;         Id is 'identifier' for entry/accept/type/task/protected.
 
-     ;; Let's skip back over the subprogram/operator name
+     ;; Skip back over the whitespace (whitespace characters are given
+     ;; here explicitly because skipping over syntax class " " does
+     ;; not skip over newline).
      (skip-chars-backward " \t\n")
-     (if (= (char-before) ?\")
-         (skip-syntax-backward "\".w")
-       (backward-word 1))
 
-     ;; and now over the second one
-     (backward-word 1)
+     (or
+      ;; check for "function" or "procedure" (5,6,9,10),
+      ;; but do not care about "access" and "protected"
+      (and (let ((downcase-char-before (downcase (char-before))))
+             (or (= downcase-char-before ?n)
+                 (= downcase-char-before ?e)))
+           (save-excursion
+             (skip-syntax-backward "w_")
+             (looking-at "\\(function\\|procedure\\)\\>")
+             (looking-back-at-whitespace-or-semi)))
 
-     ;; We should ignore the case when the reserved keyword is in a
-     ;; comment (for instance, when we have:
-     ;;    -- .... package
-     ;;    Test (A)
-     ;; we should return nil
+      ;; check for operators, i.e. function "." (1,3)
+      (if (= (char-before) ?\")
+          (save-excursion
+            (backward-char) ;; closing quote
+            (skip-chars-backward "^\"")
+            (backward-char) ;; opening quote
+            (skip-chars-backward " \t\n") ;; optional space
+            (and (< (skip-syntax-backward "w_") 0)
+                 (looking-at "function\\>")
+                 (looking-back-at-whitespace-or-semi))))
 
-     (not (ada-in-string-or-comment-p))
+      ;; check for entry/accept families
+      (if (= (char-before) ?\))
+          (save-excursion
+            (backward-sexp) ;; family index
+            (skip-chars-backward " \t\n") ;; optional whitespace
+            (and (not (ada-after-keyword-p))
+                 (< (skip-syntax-backward "w_") 0) ;; name
+                 (looking-at "[a-zA-Z][a-zA-Z0-9_]*\\>") ;; confirm
+                 (< (skip-chars-backward " \t\n")) ;; whitespace
+                 (< (skip-syntax-backward "w_") 0) ;; entry/accept
+                 (looking-at "\\(accept\\|entry\\)\\>")
+                 (looking-back-at-whitespace-or-semi))))
 
-     ;; right keyword two words before parenthesis ?
-     ;; Type is in this list because of discriminants
-     ;; pragma is not, because the syntax is that of a subprogram call.
-     (looking-at (eval-when-compile
-		   (concat "\\<\\("
-			   "procedure\\|function\\|body\\|"
-			   "task\\|entry\\|accept\\|"
-			   "access[ \t]+procedure\\|"
-			   "access[ \t]+function\\|"
-			   "type\\)\\>"))))))
+      ;; check for identifier preceded by "type" (15,16,17),
+      ;; but do not care about "task" and "protected"
+      (save-excursion
+        (and (< (skip-syntax-backward "w_") 0)
+             (< (skip-chars-backward " \t\n") 0)
+             (< (skip-syntax-backward "w_") 0)
+             (looking-at "type\\>")
+             (looking-back-at-whitespace-or-semi)))
+
+      ;; check for subprograms with names
+      (if (not (ada-after-keyword-p)) ;; keyword is not a subprogram name
+          (save-excursion
+            ;; skip characters that constitute a valid subprogram name;
+            ;; then check if indeed skipped over a valid compound_name
+            ;; preceded by a whitespace
+
+            ;; it also matches entry/accept and generic
+            ;; function/procedure formals with compound names
+            (and (< (skip-chars-backward "a-zA-Z0-9_.") 0)
+                 (looking-at ;; compound_name
+                  "[a-zA-Z][a-zA-Z0-9_]*\\(\\.[a-zA-Z][a-zA-Z0-9_]*\\)*\\>")
+                 (< (skip-chars-backward " \t\n") 0) ;; whitespace
+                 (< (skip-syntax-backward "w_") 0)
+                 (looking-at "\\(accept\\|entry\\|function\\|procedure\\)\\>")
+                 (looking-back-at-whitespace-or-semi))))
+
+      ;; We should ignore the case when the reserved keyword is in a
+      ;; comment (for instance, when we have:
+      ;;    -- .... package
+      ;;    Test (A)
+      ;; we should return nil
+
+      ;;(not (ada-in-string-or-comment-p))
+      ))))
 
 (defun ada-search-ignore-complex-boolean (regexp backwardp)
   "Search for REGEXP, ignoring comments, strings, 'and then', 'or else'.
