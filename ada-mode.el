@@ -3791,6 +3791,10 @@ If GOTOTHEN is non-nil, point moves to the 'then' following 'if'."
 		(forward-word 2);; skip "body/type" and type name
 		(ada-goto-next-non-ws);; skip type name
 
+                ;; Skip optional task discriminant part
+                (when (= (char-after) ?\()
+                  (forward-sexp))
+
 		;; Do nothing if we are simply looking at a simple
 		;; "task type name;" statement with no block
 		(unless (looking-at ";")
