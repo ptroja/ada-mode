@@ -3787,8 +3787,8 @@ If GOTOTHEN is non-nil, point moves to the 'then' following 'if'."
 	      (cond
 	       ((looking-at "\\<body\\>"))
 	       ((looking-at "\\<type\\>")
-		;;  In that case, do nothing if there is a "is"
-		(forward-word 2);; skip "type"
+		;; In that case, do nothing if there is a "is"
+		(forward-word 2);; skip "body/type" and type name
 		(ada-goto-next-non-ws);; skip type name
 
 		;; Do nothing if we are simply looking at a simple
