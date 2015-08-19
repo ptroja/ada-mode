@@ -3834,13 +3834,28 @@ If GOTOTHEN is non-nil, point moves to the 'then' following 'if'."
 	    ;; Ignore if this is just a declaration
 	    (save-excursion
 	      (let ((pos (ada-search-ignore-string-comment
-			  "\\(\\<is\\>\\|\\<renames\\>\\|;\\)" nil)))
+			  (concat (regexp-opt '("renames" "is"
+                                                "function" "procedure")
+                                              'words)
+                                  "\\|;"))))
 		(if pos
-		    (goto-char (car pos)))
-		(if (looking-at "is")
-		    ;;  remove entry for end
-		    (pop last-was-begin))))
-	    (setq nest-count (1- nest-count)))
+		    (progn
+                      (goto-char (car pos))
+                      (cond
+                       ;; beginning of a protected type/body
+                       ((looking-at "is")
+                        ;;  remove entry for end and decrease nest-count
+                        (pop last-was-begin)
+                        (setq nest-count (1- nest-count)))
+
+                       ;; part of "access protected function/procedure ..."
+                       ((looking-at "function\\|protected"))
+
+                       ;; ??? renames
+                       ;; semicolon
+                       (t
+                        ;; the default action
+                        (setq nest-count (1- nest-count)))))))))
 
 	   ((or (looking-at "procedure")
 		(looking-at "function"))
